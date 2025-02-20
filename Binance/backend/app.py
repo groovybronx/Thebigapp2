@@ -3,12 +3,15 @@ from binance.client import Client
 import os
 from pymongo import MongoClient
 import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
 # Binance API credentials (replace with your actual keys)
-api_key = os.environ.get('BINANCE_API')
-api_secret = os.environ.get('BINANCE_SECRET')
+api_key = os.environ.get('BINANCE_API_KEY')
+api_secret = os.environ.get('BINANCE_API_SECRET')
 
 client = Client(api_key, api_secret, testnet=True)
 

@@ -1,23 +1,9 @@
-# Backend Dockerfile
-FROM python:3.9-slim as backend
+# binance/Dockerfile
+FROM python:3.9-slim
 
 WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
 
-COPY backend/requirements.txt .
-RUN pip install -r requirements.txt
-
-COPY backend/ .
-
-CMD ["python", "app.py"]
-
-# Frontend Dockerfile
-FROM node:14 as frontend
-
-WORKDIR /app
-
-COPY frontend/package*.json ./
-RUN npm install
-
-COPY frontend/ .
-
-CMD ["npm", "start"]
+CMD ["python", "app.py"]  # Format correct sans virgule superflue

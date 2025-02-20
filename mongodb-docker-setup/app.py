@@ -1,14 +1,19 @@
 from pymongo import MongoClient
 from binance.client import Client
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # Charge les variables depuis .env
 
 # MongoDB Configuration
-MONGODB_HOST = 'localhost'
+MONGODB_HOST = 'mongodb'
 MONGODB_PORT = 27017
 MONGODB_DATABASE = 'binance_data'
 
 # Binance API Keys (Replace with your actual keys)
-BINANCE_API_KEY = 'YOUR_BINANCE_API_KEY'
-BINANCE_API_SECRET = 'YOUR_BINANCE_API_SECRET'
+
+BINANCE_API_KEY = os.getenv("BINANCE_API_KEY")
+BINANCE_API_SECRET = os.getenv("BINANCE_API_SECRET")
 
 def connect_to_mongodb():
     """Connects to MongoDB."""
