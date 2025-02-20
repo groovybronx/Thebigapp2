@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "mongodb-docker-setup",
+			"path": "../../mongodb-docker-setup"
+		},
+		{
+			"name": "Binance",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}

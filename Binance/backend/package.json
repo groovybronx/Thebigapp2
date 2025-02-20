@@ -1,0 +1,16 @@
+{
+  "name": "binanceapp",
+  "version": "1.0.0",
+  "description": "Your project description",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "node-binance-api": "^0.13.4",
+    "mongoose": "^8.10.1",
+    "express": "^4.21.2"
+  },
+  "author": "dm",
+  "license": "ISC"
+}
