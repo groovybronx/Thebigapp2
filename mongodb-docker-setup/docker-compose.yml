@@ -1,6 +1,7 @@
 services:
   mongodb:
-    image: mongodb:latest
+    image: mongo:latest
+    container_name: mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: pass
@@ -8,14 +9,20 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
-
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
   mongo-express:
     image: mongo-express:latest
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-      ME_CONFIG_MONGODB_SERVER: pass
+      ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+      ME_CONFIG_MONGODB_SERVER: mongodb  # <-- Utilisez "mongodb" au lieu de "mongo"
     ports:
       - "8081:8081"
 

@@ -1,34 +1,33 @@
-from flask import Flask
-from binance.client import Client
 import os
 from pymongo import MongoClient
-import datetime
+from binance.client import Client
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv()  # Charge les variables depuis .env
 
-app = Flask(__name__)
+# Configuration MongoDB (Docker)
+MONGODB_HOST = os.getenv("MONGODB_HOST", "mongodb")  # Nom du service Docker
+MONGODB_PORT = int(os.getenv("MONGODB_PORT", 27017))
+MONGODB_USER = os.getenv("MONGODB_USER", "admin")
+MONGODB_PASS = os.getenv("MONGODB_PASS", "pass")
+MONGODB_DATABASE = os.getenv("MONGODB_DATABASE", "binance_data")
 
-# Binance API credentials (replace with your actual keys)
-api_key = os.environ.get('BINANCE_API_KEY')
-api_secret = os.environ.get('BINANCE_API_SECRET')
+# Configuration Binance
+BINANCE_API_KEY = os.getenv("BINANCE_API_KEY")
+BINANCE_API_SECRET = os.getenv("BINANCE_API_SECRET")
 
-client = Client(api_key, api_secret, testnet=True)
-
-# MongoDB setup
-mongo_client = MongoClient('mongodb://mongodb:27017/')  # Use 'mongodb' as hostname
-db = mongo_client.binanceData
-
-@app.route('/api/binanceData')
-def get_binance_data():
+def connect_to_mongodb():
+    """Connexion à MongoDB avec authentification"""
     try:
-        prices = client.get_all_tickers()
-        for ticker in prices:
-            ticker['timestamp'] = datetime.datetime.utcnow()
-            db.prices.insert_one(ticker)
-        return "Binance data stored successfully"
+        client = MongoClient(
+            host=MONGODB_HOST,
+            port=MONGODB_PORT,
+            username=MONGODB_USER,
+            password=MONGODB_PASS
+        )
+        db = client[MONGODB_DATABASE]
+        print("✅ Connecté à MongoDB")
+        return db
     except Exception as e:
-        return str(e)
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+        print(f"❌ Erreur MongoDB: {e}")
+        return None
