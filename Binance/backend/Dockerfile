@@ -8,4 +8,4 @@ FROM python:alpine3.21
 WORKDIR /app
 COPY --from=builder /root/.local /root/.local
 COPY . .
-CMD ["python", "app.py"]
+CMD ["python", "backend/app.py"]

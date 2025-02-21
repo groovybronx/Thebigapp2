@@ -36,12 +36,6 @@ services:
     ports:
       - "5000:5000"
 
-  web:  # The Flask app
-    build: .
-    ports:
-      - "5000:5000"
-    depends_on:
-      - mongodb  # CORRECT: Use "mongodb"
 
 volumes:
   mongodb_data:

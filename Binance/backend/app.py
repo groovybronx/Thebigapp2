@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from binance.client import Client
 
 
+
 load_dotenv()  # Charge les variables depuis .env
 
 # Configuration MongoDB (Docker)
@@ -14,8 +15,13 @@ MONGODB_PASS = os.getenv("MONGODB_PASS", "pass")
 MONGODB_DATABASE = os.getenv("MONGODB_DATABASE", "binance_data")
 
 # Configuration Binance
-BINANCE_API_KEY = os.getenv("BINANCE_API_KEY")
-BINANCE_API_SECRET = os.getenv("BINANCE_API_SECRET")
+BINANCE_API_KEY = os.getenv('BINANCE_API_KEY')
+BINANCE_API_SECRET = os.getenv('BINANCE_API_SECRET')
+
+def get_binance_client():
+    api_key = 'BINANCE_API_KEY'
+    api_secret = 'BINANCE_API_SECRE'
+    return Client(api_key, api_secret)
 
 def connect_to_mongodb():
     """Connexion à MongoDB avec authentification"""
