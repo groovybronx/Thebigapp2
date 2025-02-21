@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "HOST=0.0.0.0 npm start"]
+CMD ["npm", "start"]
