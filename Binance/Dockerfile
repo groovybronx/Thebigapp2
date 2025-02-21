@@ -1,9 +1,8 @@
 # binance/Dockerfile
-FROM python:3.9-slim
-
+FROM python:alpine3.21
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
-CMD ["python", "app.py"]  # Format correct sans virgule superflue
+CMD ["python", "app.py"]  # Format correct

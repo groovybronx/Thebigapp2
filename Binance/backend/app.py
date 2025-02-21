@@ -1,7 +1,8 @@
 import os
 from pymongo import MongoClient
-from binance.client import Client
 from dotenv import load_dotenv
+from binance.client import Client
+
 
 load_dotenv()  # Charge les variables depuis .env
 
