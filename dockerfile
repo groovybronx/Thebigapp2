@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 FROM python:3.9-slim-buster
 WORKDIR /app
 COPY --from=builder /app/requirements.txt .
-COPY . .  # Copie des fichiers nécessaires (voir .dockerignore)
+COPY . .  
 COPY entrypoint.sh /app/
 RUN chmod +x /app/entrypoint.sh
 
