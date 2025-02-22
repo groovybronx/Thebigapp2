@@ -14,6 +14,8 @@ services:
       interval: 5s
       timeout: 2s
       retries: 10
+    networks: # Add this under mongodb service
+      - my-network # Name of the network
 
   mongo-express:
     image: mongo-express:latest
@@ -26,6 +28,8 @@ services:
       ME_CONFIG_MONGODB_SERVER: mongodb
     ports:
       - "8081:8081"
+    networks: # Add this under mongo-express service
+      - my-network # Name of the network
 
   binance:
     build: ./binance
@@ -35,6 +39,8 @@ services:
         condition: service_healthy
     ports:
       - "5000:5000"
+    networks: # Add this under binance service
+      - my-network # Name of the network
 
   backend:
     build: ./Binance/backend
@@ -44,6 +50,12 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
+    networks: # Add this under backend service
+      - my-network # Name of the network
 
 volumes:
   mongodb_data:
+
+networks: # Add this at the bottom of your docker-compose.yml
+  my-network: # Define the network
+    driver: bridge

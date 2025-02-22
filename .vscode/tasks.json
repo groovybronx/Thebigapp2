@@ -1,0 +1,11 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "Containers: Logs: thebigapp2-backend-1", // You can change this label
+            "command": "docker compose logs --tail 1000 -f backend", // Using service name "backend"
+            "problemMatcher": []
+        }
+    ]
+}

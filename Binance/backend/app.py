@@ -8,7 +8,7 @@ from binance.client import Client
 load_dotenv()  # Charge les variables depuis .env
 
 # Configuration MongoDB (Docker)
-MONGODB_HOST = os.getenv("MONGODB_HOST", "mongodb")  # Nom du service Docker
+MONGODB_HOST = os.getenv("MONGODB_HOST", "mongodb")
 MONGODB_PORT = int(os.getenv("MONGODB_PORT", 27017))
 MONGODB_USER = os.getenv("MONGODB_USER", "admin")
 MONGODB_PASS = os.getenv("MONGODB_PASS", "pass")
