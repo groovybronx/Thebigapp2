@@ -28,8 +28,8 @@ services:
       ME_CONFIG_MONGODB_SERVER: mongodb
     ports:
       - "8081:8081"
-    networks:
-      - my-network
+    networks: # Add this under mongo-express service
+      - my-network # Name of the network
 
   binance:
     build: ./binance
@@ -43,7 +43,7 @@ services:
       - my-network # Name of the network
 
   backend:
-    build: ./backend
+    build: ./Binance/backend
     env_file: .env
     ports:
       - "5001:5001"
