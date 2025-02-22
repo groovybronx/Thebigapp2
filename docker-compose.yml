@@ -3,14 +3,14 @@ services:
     image: mongo:latest
     container_name: mongodb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: pass
+      MONGO_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD-SHELL", "mongosh --eval 'db.adminCommand(\"ping\").ok' || exit 1"]
       interval: 5s
       timeout: 2s
       retries: 10
@@ -21,8 +21,8 @@ services:
       mongodb:
         condition: service_healthy
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
-      ME_CONFIG_MONGODB_ADMINPASSWORD: pass
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD}
       ME_CONFIG_MONGODB_SERVER: mongodb
     ports:
       - "8081:8081"
@@ -36,6 +36,14 @@ services:
     ports:
       - "5000:5000"
 
+  backend:
+    build: ./Binance/backend
+    env_file: .env
+    ports:
+      - "5001:5001" # Change port to avoid conflict with binance
+    depends_on:
+      mongodb:
+        condition: service_healthy
 
 volumes:
   mongodb_data:

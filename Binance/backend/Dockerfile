@@ -1,11 +1,19 @@
-# backend/Dockerfile
-FROM python:alpine3.21 as builder
+FROM python:alpine3.21 AS builder
+
 WORKDIR /app
-COPY requirements.txt .
-RUN pip install --user -r requirements.txt
+
+COPY ../requirements.txt . 
+
+# Installation des dépendances --user et --no-cache-dir
+RUN pip install --no-cache-dir --user -r requirements.txt
 
 FROM python:alpine3.21
+
 WORKDIR /app
+
+# Copie des librairies installées (chemin corrigé)
 COPY --from=builder /root/.local /root/.local
+
 COPY . .
-CMD ["python", "backend/app.py"]
+
+ENTRYPOINT ["python", "backend/app.py"]

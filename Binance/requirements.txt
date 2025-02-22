@@ -1,5 +1,5 @@
 flask
-python-binance==1.0.27
+python-binance
 pymongo
 requests
 python-dotenv
