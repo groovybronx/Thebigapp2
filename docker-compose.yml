@@ -20,6 +20,19 @@ services:
     networks:
       - mongo-network
 
+  web:
+    build: 
+      context: ./Binance/backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - BINANCE_API_KEY=${BINANCE_API_KEY}
+      - BINANCE_API_SECRET=${BINANCE_API_SECRET}
+    depends_on:
+      - mongodb
+
+
   
 
 

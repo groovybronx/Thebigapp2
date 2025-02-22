@@ -1,4 +1,3 @@
 python-binance
-os
 Flask
 pymongo
