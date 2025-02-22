@@ -3,7 +3,7 @@ FROM python:alpine3.21 AS builder
 
 WORKDIR /app
 
-COPY ../../requirements.txt .
+COPY requirements.txt .
 
 # Installation des dépendances --no-cache-dir
 RUN pip install --no-cache-dir -r requirements.txt

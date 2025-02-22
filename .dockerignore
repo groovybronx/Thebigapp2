@@ -2,4 +2,3 @@
 __pycache__
 *.pyc
 tests/
-# ... autres fichiers et dossiers à exclure
