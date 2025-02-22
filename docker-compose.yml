@@ -14,48 +14,26 @@ services:
       interval: 5s
       timeout: 2s
       retries: 10
-    networks: # Add this under mongodb service
-      - my-network # Name of the network
+    networks:
+      - my-network
+      
+mongo-express:
+  image: mongo-express:latest
+  depends_on:
+    mongodb:
+      condition: service_healthy
+  environment:
+    ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USERNAME}
+    ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD}
+    ME_CONFIG_MONGODB_SERVER: mongodb
+  ports:
+    - "8081:8081"
+  networks:
+    - my-network
 
-  mongo-express:
-    image: mongo-express:latest
-    depends_on:
-      mongodb:
-        condition: service_healthy
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USERNAME}
-      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD}
-      ME_CONFIG_MONGODB_SERVER: mongodb
-    ports:
-      - "8081:8081"
-    networks: # Add this under mongo-express service
-      - my-network # Name of the network
-
-  binance:
-    build: ./binance
-    env_file: .env
-    depends_on:
-      mongodb:
-        condition: service_healthy
-    ports:
-      - "5000:5000"
-    networks: # Add this under binance service
-      - my-network # Name of the network
-
-  backend:
-    build: ./Binance/backend
-    env_file: .env
-    ports:
-      - "5001:5001"
-    depends_on:
-      mongodb:
-        condition: service_healthy
-    networks: # Add this under backend service
-      - my-network # Name of the network
+networks:
+  my-network:
+    driver: bridge
 
 volumes:
   mongodb_data:
-
-networks: # Add this at the bottom of your docker-compose.yml
-  my-network: # Define the network
-    driver: bridge

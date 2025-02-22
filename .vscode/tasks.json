@@ -3,9 +3,30 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "Containers: Logs: thebigapp2-backend-1", // You can change this label
-            "command": "docker compose logs --tail 1000 -f backend", // Using service name "backend"
+            "label": "Containers: Logs: thebigapp2-backend-1",
+            "command": "docker compose logs --tail 1000 -f backend",
             "problemMatcher": []
+        },
+        {
+            "type": "docker-build",
+            "label": "docker-build",
+            "platform": "python",
+            "dockerBuild": {
+                "tag": "thebigapp2:latest",
+                "dockerfile": "${workspaceFolder}/Dockerfile",
+                "context": "${workspaceFolder}",
+                "pull": true
+            }
+        },
+        {
+            "type": "docker-run",
+            "label": "docker-run: debug",
+            "dependsOn": [
+                "docker-build"
+            ],
+            "python": {
+                "file": "Binance/backend/app.py"
+            }
         }
     ]
 }
