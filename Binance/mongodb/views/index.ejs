@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <title>Gestion MongoDB</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-4">
+    <h1>Bases de données MongoDB</h1>
+
+    <div class="mb-4">
+      <h2>Créer une base de données</h2>
+      <form action="/data/createDatabase" method="post" class="form-inline">
+        <input type="text" name="dbName" placeholder="Nom de la base de données" class="form-control mr-2" required>
+        <button type="submit" class="btn btn-primary">Créer</button>
+      </form>
+    </div>
+
+    <h2>Liste des bases de données</h2>
+    <ul class="list-group mb-4">
+      <% if (databases && databases.length > 0) { %>
+        <% databases.forEach(db => { %>
+          <li class="list-group-item">
+            <a href="/data/database/<%= db.name %>"><%= db.name %></a>
+            <a href="/data/deleteDatabase/<%= db.name %>" class="float-right btn btn-danger btn-sm">Supprimer</a>
+          </li>
+        <% }); %>
+      <% } else { %>
+        <li class="list-group-item">Aucune base de données disponible.</li>
+      <% } %>
+    </ul>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

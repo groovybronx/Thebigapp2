@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <title>Base de données <%= dbName %></title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-4">
+    <h1>Base de données : <%= dbName %></h1>
+
+    <h2>Collections</h2>
+    <ul class="list-group mb-4">
+      <% if (collections && collections.length > 0) { %>
+        <% collections.forEach(collection => { %>
+          <li class="list-group-item">
+            <%= collection.name %>
+            <ul class="list-group mt-2">
+              <% if (collectionData[collection.name] && collectionData[collection.name].length > 0) { %>
+                <% collectionData[collection.name].forEach(document => { %>
+                  <li class="list-group-item">
+                    <% try { %>
+                      <pre><%= JSON.stringify(document, null, 2) %></pre>
+                    <% } catch (e) { %>
+                      <p>Erreur lors de l'affichage du document.</p>
+                    <% } %>
+                    <a href="/data/database/<%= dbName %>/<%= collection.name %>/delete/<%= document._id %>" class="float-right btn btn-danger btn-sm">Supprimer</a>
+                  </li>
+                <% }); %>
+              <% } else { %>
+                <li class="list-group-item">Cette collection est vide.</li>
+              <% } %>
+            </ul>
+            <form action="/data/database/<%= dbName %>/<%= collection.name %>" method="post" class="form-inline mt-2">
+              <input type="text" name="name" placeholder="Nom" class="form-control mr-2" required>
+              <input type="number" name="value" placeholder="Valeur" class="form-control mr-2" required>
+              <button type="submit" class="btn btn-success">Ajouter</button>
+            </form>
+          </li>
+        <% }); %>
+      <% } else { %>
+        <li class="list-group-item">Cette base de données ne contient aucune collection.</li>
+      <% } %>
+    </ul>
+
+    <a href="/data" class="btn btn-secondary">Retour à la liste des bases de données</a>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
