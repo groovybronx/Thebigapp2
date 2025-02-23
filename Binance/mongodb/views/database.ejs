@@ -1,52 +1,179 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <title>Base de données <%= dbName %></title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Base de données <%= dbName %></title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-  <div class="container mt-4">
-    <h1>Base de données : <%= dbName %></h1>
+    <div class="container mt-4">
+        <h1>Base de données : <%= dbName %></h1>
 
-    <h2>Collections</h2>
-    <ul class="list-group mb-4">
-      <% if (collections && collections.length > 0) { %>
-        <% collections.forEach(collection => { %>
-          <li class="list-group-item">
-            <%= collection.name %>
-            <ul class="list-group mt-2">
-              <% if (collectionData[collection.name] && collectionData[collection.name].length > 0) { %>
-                <% collectionData[collection.name].forEach(document => { %>
-                  <li class="list-group-item">
-                    <% try { %>
-                      <pre><%= JSON.stringify(document, null, 2) %></pre>
-                    <% } catch (e) { %>
-                      <p>Erreur lors de l'affichage du document.</p>
-                    <% } %>
-                    <a href="/data/database/<%= dbName %>/<%= collection.name %>/delete/<%= document._id %>" class="float-right btn btn-danger btn-sm">Supprimer</a>
-                  </li>
-                <% }); %>
-              <% } else { %>
-                <li class="list-group-item">Cette collection est vide.</li>
-              <% } %>
-            </ul>
-            <form action="/data/database/<%= dbName %>/<%= collection.name %>" method="post" class="form-inline mt-2">
-              <input type="text" name="name" placeholder="Nom" class="form-control mr-2" required>
-              <input type="number" name="value" placeholder="Valeur" class="form-control mr-2" required>
-              <button type="submit" class="btn btn-success">Ajouter</button>
+        <div class="mb-4">
+            <h2 style="font-size: 1.2rem;">Filtrer les documents</h2>
+            <form action="/data/database/<%= dbName %>" method="get" class="form-inline">
+                <input type="text" name="filter" placeholder="Filtre (JSON)" class="form-control mr-2" value="<%= filter %>">
+                <button type="submit" class="btn btn-primary">Filtrer</button>
             </form>
-          </li>
-        <% }); %>
-      <% } else { %>
-        <li class="list-group-item">Cette base de données ne contient aucune collection.</li>
-      <% } %>
-    </ul>
+        </div>
 
-    <a href="/data" class="btn btn-secondary">Retour à la liste des bases de données</a>
-  </div>
+        <div class="mb-4">
+            <h2 style="font-size: 1.2rem;">Trier les documents</h2>
+            <form action="/data/database/<%= dbName %>" method="get" class="form-inline">
+                <input type="text" name="sort" placeholder="Tri (JSON)" class="form-control mr-2" value="<%= sort %>">
+                <button type="submit" class="btn btn-primary">Trier</button>
+            </form>
+        </div>
 
-  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <div class="mb-4 d-flex justify-content-between align-items-center">
+            <h2>Collections</h2>
+            <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createCollectionModal">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+        <form id="collectionForm" action="/data/database/<%= dbName %>" method="get">
+            <ul class="list-group mb-4">
+                <% if (collections && collections.length > 0) { %>
+                    <% collections.forEach(collection => { %>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <input type="radio" name="collection" value="<%= collection.name %>" id="<%= collection.name %>" <%= selectedCollection === collection.name ? 'checked' : '' %> onchange="document.getElementById('collectionForm').submit();">
+                                <label for="<%= collection.name %>"><%= collection.name %></label>
+                            </div>
+                            <div>
+                                <a href="#" class="btn btn-sm" onclick="showRenameModal('<%= dbName %>', '<%= collection.name %>', '<%= encodeURIComponent(filter) %>', '<%= encodeURIComponent(sort) %>')">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </a>
+                                <a href="#" class="btn btn-sm" onclick="showDeleteModal('<%= dbName %>', '<%= collection.name %>', '<%= encodeURIComponent(filter) %>', '<%= encodeURIComponent(sort) %>')">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </div>
+                        </li>
+                    <% }); %>
+                <% } else { %>
+                    <li class="list-group-item">Cette base de données ne contient aucune collection.</li>
+                <% } %>
+            </ul>
+        </form>
+
+        <h2>Collection : <%= selectedCollection %></h2>
+        <ul class="list-group mb-4">
+            <% if (selectedCollection && collectionData[selectedCollection] && collectionData[selectedCollection].length > 0) { %>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <% Object.keys(collectionData[selectedCollection][0]).forEach(key => { %>
+                                <th><%= key %></th>
+                            <% }); %>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% collectionData[selectedCollection].forEach(document => { %>
+                            <tr>
+                                <% Object.values(document).forEach(value => { %>
+                                    <td><%= JSON.stringify(value) %></td>
+                                <% }); %>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else if (selectedCollection) { %>
+                <li class="list-group-item">Cette collection est vide.</li>
+            <% } %>
+        </ul>
+
+        <a href="/data" class="btn btn-secondary">Retour à la liste des bases de données</a>
+    </div>
+
+    <div class="modal fade" id="renameModal" tabindex="-1" role="dialog" aria-labelledby="renameModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="renameModalLabel">Renommer la collection</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="renameForm" action="" method="get">
+                        <div class="form-group">
+                            <label for="newCollectionName">Nouveau nom</label>
+                            <input type="text" class="form-control" id="newCollectionName" name="newName" required>
+                        </div>
+                        <input type="hidden" name="filter" value="">
+                        <input type="hidden" name="sort" value="">
+                        <button type="submit" class="btn btn-primary">Renommer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Supprimer la collection</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer la collection "<span id="deleteCollectionName"></span>" ?</p>
+                    <form id="deleteForm" action="" method="get">
+                        <input type="hidden" name="filter" value="">
+                        <input type="hidden" name="sort" value="">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="createCollectionModal" tabindex="-1" role="dialog" aria-labelledby="createCollectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createCollectionModalLabel">Créer une nouvelle collection</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="/data/database/<%= dbName %>/createCollection" method="post">
+                        <div class="form-group">
+                            <label for="collectionName">Nom de la collection</label>
+                            <input type="text" class="form-control" id="collectionName" name="collectionName" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">Créer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function showRenameModal(dbName, collectionName, filter, sort) {
+            const modal = $('#renameModal');
+            const form = $('#renameForm');
+            form.attr('action', `/data/database/${dbName}/renameCollection/${collectionName}`);
+            form.find('input[name="filter"]').val(decodeURIComponent(filter));
+            form.find('input[name="sort"]').val(decodeURIComponent(sort));
+            modal.modal('show');
+    }
+
+        function showDeleteModal(dbName, collectionName, filter, sort) {
+            const modal = $('#deleteModal');
+            const form = $('#deleteForm');
+            $('#deleteCollectionName').text(collectionName);
+            form.attr('action', `/data/database/${dbName}/deleteCollection/${collectionName}`);
+            form.find('input[name="filter"]').val(decodeURIComponent(filter));
+            form.find('input[name="sort"]').val(decodeURIComponent(sort));
+            modal.modal('show');
+        }
+    </script>
 </body>
 </html>
