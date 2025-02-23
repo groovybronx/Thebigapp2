@@ -1,6 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const config = require('../config'); // Importez le fichier de configuration
+
+// Connexion à MongoDB Atlas
+mongoose
+  .connect(config.mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Connexion à MongoDB Atlas réussie'))
+  .catch((err) => console.error(err));
 
 // Routes des bases de données
 router.get('/', async (req, res) => {
@@ -76,7 +83,7 @@ router.post('/database/:dbName/createCollection', async (req, res) => {
     try {
         const db = mongoose.connection.client.db(dbName);
         await db.createCollection(collectionName);
-        res.redirect(`/data/database/${dbName}`); // Rediriger vers la page de la base de données
+        res.redirect(`/data/database/${dbName}`);
     } catch (err) {
         console.error(err);
         res.status(500).send('Erreur lors de la création de la collection');
@@ -88,11 +95,10 @@ router.get('/database/:dbName/renameCollection/:collectionName', async (req, res
     const dbName = req.params.dbName;
     const collectionName = req.params.collectionName;
     try {
-        // Logique pour renommer la collection
-        const newName = req.query.newName; // Récupérer le nouveau nom de la collection depuis la requête
+        const newName = req.query.newName;
         const db = mongoose.connection.client.db(dbName);
         await db.collection(collectionName).rename(newName);
-        res.redirect(`/data/database/${dbName}`); // Rediriger vers la page de la base de données
+        res.redirect(`/data/database/${dbName}`);
     } catch (err) {
         console.error(err);
         res.status(500).send('Erreur lors du renommage de la collection');
@@ -106,7 +112,7 @@ router.get('/database/:dbName/deleteCollection/:collectionName', async (req, res
     try {
         const db = mongoose.connection.client.db(dbName);
         await db.collection(collectionName).drop();
-        res.redirect(`/data/database/${dbName}`); // Rediriger vers la page de la base de données
+        res.redirect(`/data/database/${dbName}`);
     } catch (err) {
         console.error(err);
         res.status(500).send('Erreur lors de la suppression de la collection');
